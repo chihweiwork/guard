@@ -15,6 +15,11 @@ create:
 	$(SYSTEM_PYTHON) -m venv $(VENV)
 	$(VENV_PYTHON) -m pip install --upgrade pip
 	$(VENV_PYTHON) -m pip install -U setuptools wheel
+install:
+	$(SYSTEM_PYTHON) -m venv $(VENV)
+	$(VENV_PYTHON) -m pip install --upgrade pip
+	$(VENV_PYTHON) -m pip install -U setuptools wheel
+	$(VENV_PYTHON) -m pip install -r requirements.txt
 
 clean:	
 	rm -rf .tox *.egg-info dis venv __pycache__ logs
