@@ -1,5 +1,8 @@
+altgraph==0.17.3
 click==8.0.4
 importlib-metadata==4.8.3
+pyinstaller==4.10
+pyinstaller-hooks-contrib==2022.0
 PyYAML==6.0
 typing_extensions==4.1.1
 zipp==3.6.0
