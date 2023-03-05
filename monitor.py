@@ -5,8 +5,8 @@ import click
 from itertools import chain
 import datetime
 import pdb
+import click
 
-#@click.option('--folder', 'exporter_folder', is_flag=True, help="exporter folder information")
 class Exporter(
         ToolBox, BasicLogger, LocalInformation,
         FolderMonitor
@@ -49,7 +49,11 @@ class Exporter(
 
         self.logger.info(data)
         return data
+@click.command()
+@click.option('-c','--config','config_path',help='--config [PATH/TO/CONFIGURATION/FILE]')
+def main(config_path):
+    e = Exporter(config_path)
+    e.run()
 
 if __name__ == "__main__":
-    e = Exporter("./monitor.yml")
-    e.run()
+    main()
