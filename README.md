@@ -15,6 +15,20 @@ Log:
   file: [LOG/FILE/NAME]
 ```
 
+## 使用方式
+1. clone 這個 project
+   ``` git
+   git clone [gurad/project/url]
+   ```
+2. 建立環境
+   ``` bash
+   make install
+   ```
+3. 編譯程式產出執行檔
+   ``` bash
+   make build
+   ```
+
 ## folder
 ### metric: folder_size
   - 設定方法
