@@ -1,5 +1,6 @@
 from folder import FolderMonitor
 from base import ToolBox, BasicLogger, LocalInformation
+from postman import KafkaOps
 import click
 
 from itertools import chain
@@ -9,6 +10,7 @@ import click
 
 class Exporter(
         ToolBox, BasicLogger, LocalInformation,
+        KafkaOps, 
         FolderMonitor
     ):
     def __init__(self, config_path):
@@ -26,12 +28,17 @@ class Exporter(
            log_dir = self.configs['Log']['dir']
         )
 
+        # 實例化 KAFKA 設定
+        KafkaOps.__init__(self)
+        # 設定 KAFKA PRODUCER 
+        self.setup_producer()
+
         # 這裡實例化監控物件
         FolderMonitor.__init__(self)
         
         self.reset_logger_format("[%(asctime)s] [%(levelname)s]: %(message)s")
 
-    def insert_data(self, list1, list2):
+    def insert_data(self, list1: list, list2: list) -> list:
         # merge two list
         return list(chain(list1, list2))
 
@@ -40,13 +47,17 @@ class Exporter(
         data = dict()
         data['info'] = self.basic_info()
         data['info']['exec_date'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        
+        # setup kafka topic
+        topic = self.configs['kafka']['topic']
 
         # start collect data
         data['data'] = list()
         if "folder" in self.configs['monitor'].keys():
-            for target in self.folder_info_export():
-                data['data'] = self.insert_data(data['data'], target)
-
+            # get all data from folder_infor_exporter
+            tmp_data = self.folder_info_export()
+            # upload data to kafka
+            self.upload_dict_list(topic, tmp_data)
         self.logger.info(data)
         return data
 @click.command()
