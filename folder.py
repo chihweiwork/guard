@@ -18,8 +18,8 @@ class FolderMonitor:
         self.folder_size = output
         return self.folder_size
     
-    def folder_info_export(self):
+    def folder_info_export(self) -> list:
         # run all metric
         folder_size = self.get_folder_size()
         
-        return [folder_size]
+        return [*folder_size]
