@@ -10,10 +10,15 @@ class FolderMonitor:
         for target in self.configs['monitor']['folder']['size']:
             # 使用 toolbox 中的 bash_command 執行系統指令
             tmp = self.bash_command(f"du -s {target}")
+            if tmp == '':
+                self.logger.error(f"Can not find {target}, skip thie folder")
+                continue
             value, path = tmp.splitlines()[0].split('\t')
             tmp_d = {
-                "metric":"folder_size", "value":int(value), "label":{"path":path}
+                "metric":"folder_size", "label":{"path":path},
+                "value": value, "exec_date":self.exec_date
             }
+            tmp_d = {**tmp_d, **self.default_label}
             output.append(tmp_d)
         self.folder_size = output
         return self.folder_size
