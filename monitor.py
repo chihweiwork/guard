@@ -35,6 +35,8 @@ class Exporter(
 
         # 這裡實例化監控物件
         FolderMonitor.__init__(self)
+
+        self.exec_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         
         self.reset_logger_format("[%(asctime)s] [%(levelname)s]: %(message)s")
 
@@ -43,23 +45,27 @@ class Exporter(
         return list(chain(list1, list2))
 
     def run(self):
+        self.logger.info("Start Monitoring")
+
         # get mechine information
-        data = dict()
-        data['info'] = self.basic_info()
-        data['info']['exec_date'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.default_label = self.basic_info()
+
+        # get monitor category
+        monitor_category = self.configs['monitor'].keys()
+        self.logger.info(f"monitor category {monitor_category}")
         
         # setup kafka topic
         topic = self.configs['kafka']['topic']
 
         # start collect data
-        data['data'] = list()
-        if "folder" in self.configs['monitor'].keys():
+        if "folder" in monitor_category:
             # get all data from folder_infor_exporter
             tmp_data = self.folder_info_export()
             # upload data to kafka
             self.upload_dict_list(topic, tmp_data)
-        self.logger.info(data)
-        return data
+
+        self.logger.info("Finish Monitoring")
+
 @click.command()
 @click.option('-c','--config','config_path',help='--config [PATH/TO/CONFIGURATION/FILE]')
 def main(config_path):
