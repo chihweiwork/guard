@@ -27,7 +27,9 @@ class ToolBox:
         else: process.wait(timeout)
         
         stdout, stderr = process.communicate()
-        if stderr != '': print(stderr)
+        if stderr != '': 
+            stderr = stderr.split('\n')[0]
+            self.logger.error(stderr)
         return stdout
 
 class LocalInformation:

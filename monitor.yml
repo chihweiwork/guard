@@ -9,3 +9,7 @@ monitor:
 Log:
     dir: ./logs
     file: monitor.log
+kafka:
+    bootstrap_servers:
+      - 127.0.0.1:9092
+    topic: test

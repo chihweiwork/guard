@@ -1,13 +1,16 @@
 from folder import FolderMonitor
 from base import ToolBox, BasicLogger, LocalInformation
+from postman import KafkaOps
 import click
 
 from itertools import chain
 import datetime
-import pdb, json
+import pdb
+import click
 
 class Exporter(
         ToolBox, BasicLogger, LocalInformation,
+        KafkaOps, 
         FolderMonitor
     ):
     def __init__(self, config_path):
@@ -25,20 +28,34 @@ class Exporter(
            log_dir = self.configs['Log']['dir']
         )
 
+        # 實例化 KAFKA 設定
+        KafkaOps.__init__(self)
+        # 設定 KAFKA PRODUCER 
+        self.setup_producer()
+
         # 這裡實例化監控物件
         FolderMonitor.__init__(self)
+
+        self.exec_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         
         self.reset_logger_format("[%(asctime)s] [%(levelname)s]: %(message)s")
 
-    def insert_data(self, list1, list2):
+    def insert_data(self, list1: list, list2: list) -> list:
         # merge two list
         return list(chain(list1, list2))
 
     def run(self):
+        self.logger.info("Start Monitoring")
+
         # get mechine information
-        data = dict()
-        data['info'] = self.basic_info()
-        data['info']['exec_date'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        self.default_label = self.basic_info()
+
+        # get monitor category
+        monitor_category = self.configs['monitor'].keys()
+        self.logger.info(f"monitor category {monitor_category}")
+        
+        # setup kafka topic
+        topic = self.configs['kafka']['topic']
 
         # start collect data
         data['data'] = list()
@@ -49,6 +66,11 @@ class Exporter(
         self.logger.info(json.dumps(data, indent=4))
         return data
 
-if __name__ == "__main__":
-    e = Exporter("./monitor.yml")
+@click.command()
+@click.option('-c','--config','config_path',help='--config [PATH/TO/CONFIGURATION/FILE]')
+def main(config_path):
+    e = Exporter(config_path)
     e.run()
+
+if __name__ == "__main__":
+    main()
