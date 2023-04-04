@@ -23,6 +23,6 @@ clean-build:
 clean-env:
 	rm -rf __pycache__ logs
 
-build: venv install
+all: venv install
 clean: clean-venv clean-build clean-env
 .PHONY: clean venv install build
