@@ -4,9 +4,8 @@ import click
 
 from itertools import chain
 import datetime
-import pdb
+import pdb, json
 
-#@click.option('--folder', 'exporter_folder', is_flag=True, help="exporter folder information")
 class Exporter(
         ToolBox, BasicLogger, LocalInformation,
         FolderMonitor
@@ -44,10 +43,10 @@ class Exporter(
         # start collect data
         data['data'] = list()
         if "folder" in self.configs['monitor'].keys():
-            for target in self.folder_info_export():
-                data['data'] = self.insert_data(data['data'], target)
+            folder_info = self.folder_info_export()
+            data['data'] = self.insert_data(data['data'], folder_info['folder_size'])
 
-        self.logger.info(data)
+        self.logger.info(json.dumps(data, indent=4))
         return data
 
 if __name__ == "__main__":

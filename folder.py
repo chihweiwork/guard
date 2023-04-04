@@ -2,7 +2,7 @@ import pdb
 
 class FolderMonitor:
 
-    def get_folder_size(self):
+    def get_folder_size(self) -> list:
         # 使用系統指令得到 folder 的大小
         cols = ['value', 'metric']
         output = list()
@@ -15,11 +15,10 @@ class FolderMonitor:
                 "metric":"folder_size", "value":int(value), "label":{"path":path}
             }
             output.append(tmp_d)
-        self.folder_size = output
-        return self.folder_size
+        return output
     
     def folder_info_export(self):
         # run all metric
-        folder_size = self.get_folder_size()
-        
-        return [folder_size]
+        return {
+            "folder_size" : self.get_folder_size()
+        }

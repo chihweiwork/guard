@@ -5,22 +5,20 @@ SYSTEM_PYTHON  = $(or $(shell which python3), $(shell which python))
 PYTHON         = $(or $(wildcard $(VENV_PYTHON)), $(SYSTEM_PYTHON))
 MYPATH         = $(PWD)/lib:$(PATH)
 
-init:
-	rm -rf $(VENV)
-	$(SYSTEM_PYTHON) -m venv $(VENV)
-	$(VENV_PYTHON) -m pip install --upgrade pip
-	$(VENV_PYTHON) -m pip install -U setuptools wheel
-	$(VENV_PYTHON) -m pip install -r requirements.txt
-create:
+venv:
 	$(SYSTEM_PYTHON) -m venv $(VENV)
 	$(VENV_PYTHON) -m pip install --upgrade pip
 	$(VENV_PYTHON) -m pip install -U setuptools wheel
 install:
-	$(SYSTEM_PYTHON) -m venv $(VENV)
-	$(VENV_PYTHON) -m pip install --upgrade pip
-	$(VENV_PYTHON) -m pip install -U setuptools wheel
 	$(VENV_PYTHON) -m pip install -r requirements.txt
 
-clean:	
-	rm -rf .tox *.egg-info dis venv __pycache__ logs
-.PHONY: clean
+clean-venv:
+	rm -rf venv
+clean-build:
+	rm -rf dist .tox *.egg-info 
+clean-env:
+	rm -rf __pycache__ logs
+
+build: venv install
+clean: clean-venv clean-build clean-env
+.PHONY: clean venv install build
