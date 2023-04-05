@@ -15,7 +15,6 @@ class FolderMonitor:
                 continue
             value, path = tmp.splitlines()[0].split('\t')
             value = self.format_bytes(float(value), "MB")
-            print(value)
             tmp_d = {
                 "exec_date":self.exec_date, "label":{"path":path}, "metric":"folder_size",
                 "data":{"folder_size":value}, 
