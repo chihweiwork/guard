@@ -12,4 +12,4 @@ Log:
 kafka:
     bootstrap_servers:
       - 172.28.0.10:9092
-    topic: test
+    topic: my_topic
