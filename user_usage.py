@@ -42,7 +42,6 @@ class User_usage:
             except psutil.AccessDenied: pass
     def get_info(self):
         data = pd.DataFrame(self.process_info_generator())
-        pdb.set_trace()
         data = data.fillna(value=0.0)
         for _, row in data.iterrows(): print(row.to_dict())
 
