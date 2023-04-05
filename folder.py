@@ -22,8 +22,12 @@ class FolderMonitor:
             output.append(tmp_d)
         return output
     
-    def folder_info_export(self) -> list:
+    def folder_info_export(self):
         # run all metric
-        return {
-            "folder_size" : self.get_folder_size()
-        }
+        function_list = [
+            self.get_folder_size
+        ]
+        output = list()
+        for func in function_list:
+            tmp = func()
+            yield tmp
