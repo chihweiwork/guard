@@ -6,7 +6,8 @@ import pandas as pd
 
 class User_usage:
     def __init__(self):
-        self.regex = ["chihwei"]
+        #self.regex = ["chihwei"]
+        self.regex = ["root"]
     
     def user_filter(self, username):
         for regex in self.regex:

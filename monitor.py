@@ -7,6 +7,7 @@ from itertools import chain
 import datetime
 import pdb
 import click
+import json
 
 class Exporter(
         ToolBox, BasicLogger, LocalInformation,
@@ -58,13 +59,13 @@ class Exporter(
         topic = self.configs['kafka']['topic']
 
         # start collect data
-        data['data'] = list()
+        #data['data'] = list()
         if "folder" in self.configs['monitor'].keys():
             folder_info = self.folder_info_export()
-            data['data'] = self.insert_data(data['data'], folder_info['folder_size'])
+            #data['data'] = self.insert_data(data['data'], folder_info['folder_size'])
 
-        self.logger.info(json.dumps(data, indent=4))
-        return data
+            self.logger.info(json.dumps(folder_info, indent=4))
+        #return data
 
 @click.command()
 @click.option('-c','--config','config_path',help='--config [PATH/TO/CONFIGURATION/FILE]')

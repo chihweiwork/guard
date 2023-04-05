@@ -11,5 +11,5 @@ Log:
     file: monitor.log
 kafka:
     bootstrap_servers:
-      - 127.0.0.1:9092
+      - 172.28.0.10:9092
     topic: test
