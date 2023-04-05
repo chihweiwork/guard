@@ -14,9 +14,12 @@ class FolderMonitor:
                 self.logger.error(f"Can not find {target}, skip thie folder")
                 continue
             value, path = tmp.splitlines()[0].split('\t')
+            value = self.format_bytes(float(value), "MB")
+            print(value)
             tmp_d = {
-                "metric":"folder_size", "label":{"path":path},
-                "value": value, "exec_date":self.exec_date
+                "exec_date":self.exec_date, "label":{"path":path}, "metric":"folder_size",
+                "data":{"folder_size":value}, 
+                
             }
             tmp_d = {**tmp_d, **self.default_label}
             output.append(tmp_d)

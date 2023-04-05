@@ -65,16 +65,9 @@ class Exporter(
             for tmp in self.folder_info_export():
                 folder_info = self.insert_data(folder_info, tmp)
             self.upload_dict_list(TOPIC, folder_info)
-            #self.logger.info(json.dumps(folder_info, indent=4))
-            #for target in folder_info:
-            #    self.logger.info(target)
-            #self.logger.info(folder_info)
         if "user_usage" in monitor_targets:
             user_usage_info = self.user_usage_exporter()
             self.upload_dict_list(TOPIC, user_usage_info)
-            #self.logger.info(user_usage_info)
-            #for target in user_usage_info:
-            #    self.logger.info(target)
 
 @click.command()
 @click.option('-c','--config','config_path',help='--config [PATH/TO/CONFIGURATION/FILE]')

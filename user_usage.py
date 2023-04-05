@@ -34,22 +34,24 @@ class UserMonitor:
                 pid = process.pid
                 label = {"username":username, 'pid':pid, 'cmdline': cmdline}
                 cpu_info = self._get_cpu_info(cpu_info)
-                m1 = {"metric": 'user_usage_memory_rss', 'exec_date':exec_data, 'value':memory_info.rss, 'label':label}
-                m2 = {"metric": 'user_usage_memory_vms', 'exec_date':exec_data, 'value':memory_info.vms, 'label':label}
-                m3 = {"metric": 'user_usage_cpu_user', 'exec_date':exec_data, 'value':cpu_info['cpu_user'], 'label':label}
-                m4 = {"metric": 'user_usage_cpu_system', 'exec_date':exec_data, 'value':cpu_info['cpu_system'], 'label':label}
-                m5 = {"metric": 'user_usage_cpu_wio', 'exec_date':exec_data, 'value':cpu_info['cpu_wio'], 'label':label}
-                for target in [m1, m2, m3, m4, m5]: yield target
+                target = {
+                    "exec_date":exec_data, "label":label, "metric":"user_usage",
+                    "data": {
+                        "user_usage_memory_rss":self.format_bytes(memory_info.rss, 'MB'), 
+                        "user_usage_memory_vms":self.format_bytes(memory_info.vms, 'MB'), 
+                        "user_usage_cpu_user":cpu_info['cpu_user'], 
+                        "user_usage_cpu_system":cpu_info['cpu_system'], 
+                        "user_usage_cpu_wio":cpu_info['cpu_wio']
+                    }
+                }
+                yield {**self.default_label, **target}
 
             except psutil.NoSuchProcess: pass
             except psutil.AccessDenied: pass
     def user_usage_exporter(self):
-        data = pd.DataFrame(self.process_info_generator())
-        data = data.fillna(value=0.0)
-        #for _, row in data.iterrows(): print(row.to_dict())
-        output = [row.to_dict() for _, row in data.iterrows()]
+        output = [x for x in self.process_info_generator()]
         return output
-
+        
 
 if __name__ == "__main__":
 
