@@ -58,13 +58,13 @@ class Exporter(
         topic = self.configs['kafka']['topic']
 
         # start collect data
-        if "folder" in monitor_category:
-            # get all data from folder_infor_exporter
-            tmp_data = self.folder_info_export()
-            # upload data to kafka
-            self.upload_dict_list(topic, tmp_data)
+        data['data'] = list()
+        if "folder" in self.configs['monitor'].keys():
+            folder_info = self.folder_info_export()
+            data['data'] = self.insert_data(data['data'], folder_info['folder_size'])
 
-        self.logger.info("Finish Monitoring")
+        self.logger.info(json.dumps(data, indent=4))
+        return data
 
 @click.command()
 @click.option('-c','--config','config_path',help='--config [PATH/TO/CONFIGURATION/FILE]')

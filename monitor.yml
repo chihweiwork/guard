@@ -3,6 +3,9 @@ monitor:
         size:
             - /var/log
             - /tmp
+    user_usage:
+        regex:
+            - chihwei
 Log:
     dir: ./logs
     file: monitor.log
