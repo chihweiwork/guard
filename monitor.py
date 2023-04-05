@@ -1,4 +1,5 @@
 from folder import FolderMonitor
+from user_usage import UserMonitor
 from base import ToolBox, BasicLogger, LocalInformation
 from postman import KafkaOps
 import click
@@ -7,11 +8,11 @@ from itertools import chain
 import datetime
 import pdb
 import click
+import json
 
 class Exporter(
-        ToolBox, BasicLogger, LocalInformation,
-        KafkaOps, 
-        FolderMonitor
+        ToolBox, BasicLogger, LocalInformation, KafkaOps, 
+        FolderMonitor, UserMonitor
     ):
     def __init__(self, config_path):
         ToolBox.__init__(self)
@@ -58,13 +59,15 @@ class Exporter(
         topic = self.configs['kafka']['topic']
 
         # start collect data
-        data['data'] = list()
-        if "folder" in self.configs['monitor'].keys():
-            folder_info = self.folder_info_export()
-            data['data'] = self.insert_data(data['data'], folder_info['folder_size'])
-
-        self.logger.info(json.dumps(data, indent=4))
-        return data
+        monitor_targets = self.configs['monitor'].keys()
+        if "folder" in monitor_targets:
+            folder_info = list()
+            for tmp in self.folder_info_export():
+                folder_info = self.insert_data(folder_info, tmp)
+            self.upload_dict_list(self.configs['kafka']['topic'], folder_info)
+        if "user_usage" in monitor_targets:
+            user_usage_info = self.user_usage_exporter()
+            self.upload_dict_list(self.configs['kafka']['topic'], user_usage_info)
 
 @click.command()
 @click.option('-c','--config','config_path',help='--config [PATH/TO/CONFIGURATION/FILE]')
@@ -73,4 +76,5 @@ def main(config_path):
     e.run()
 
 if __name__ == "__main__":
+    #TOPIC = 'my_topic'
     main()

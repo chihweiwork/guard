@@ -14,16 +14,22 @@ class FolderMonitor:
                 self.logger.error(f"Can not find {target}, skip thie folder")
                 continue
             value, path = tmp.splitlines()[0].split('\t')
+            value = self.format_bytes(float(value), "MB")
             tmp_d = {
-                "metric":"folder_size", "label":{"path":path},
-                "value": value, "exec_date":self.exec_date
+                "exec_date":self.exec_date, "label":{"path":path}, "metric":"folder_size",
+                "data":{"folder_size":value}, 
+                
             }
             tmp_d = {**tmp_d, **self.default_label}
             output.append(tmp_d)
         return output
     
-    def folder_info_export(self) -> list:
+    def folder_info_export(self):
         # run all metric
-        return {
-            "folder_size" : self.get_folder_size()
-        }
+        function_list = [
+            self.get_folder_size
+        ]
+        output = list()
+        for func in function_list:
+            tmp = func()
+            yield tmp

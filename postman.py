@@ -68,6 +68,7 @@ class KafkaOps:
         for target in data:
             self.upload_dict(topic, target)
         self.producer.flush()
+    
         
 
 if __name__ == "__main__":

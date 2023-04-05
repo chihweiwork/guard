@@ -8,7 +8,7 @@
 monitor:
   項目一:
     項目相關設定
-  項目二：
+  項目二:
     項目相關設定
 Log:
   dir: [PATH/TO/FOLDER]

@@ -5,11 +5,11 @@ monitor:
             - /tmp
     user_usage:
         regex:
-            - chihwei
+            - root
 Log:
     dir: ./logs
     file: monitor.log
 kafka:
     bootstrap_servers:
-      - 127.0.0.1:9092
-    topic: test
+      - 172.28.0.10:9092
+    topic: my_topic
