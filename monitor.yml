@@ -1,12 +1,16 @@
 monitor:
-    folder:
-        size:
-            - /var/log
-            - /tmp
-        cmd: "du -s TARGET"
+    #folder:
+    #    size:
+    #        - /var/log
+    #        - /tmp
+    #    cmd: "du -s TARGET"
     user_usage:
         regex:
-            - root
+            - "user_[a-z]{3}cub[a-z]{2,4}"
+            - "\\d{8}[a-z]{3}"
+        process-regex:
+            - {"spark-session": "pyspark-shell"}
+            - {"bash": "bash"}
 Log:
     dir: ./logs
     file: monitor.log
