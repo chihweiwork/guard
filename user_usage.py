@@ -32,10 +32,11 @@ class UserMonitor:
                 cmdline = process.cmdline()
                 cmdline = '' if cmdline == None else ' '.join(cmdline)
                 pid = process.pid
-                label = {"username":username, 'pid':pid, 'cmdline': cmdline}
+                name = process.name()
+                label = {"username":username, 'pid':pid, 'cmdline': cmdline, 'name':name}
                 cpu_info = self._get_cpu_info(cpu_info)
                 target = {
-                    "exec_date":exec_data, "label":label, "metric":"user_usage",
+                    "exec_date":exec_data, "label":label, "metric":"user_resource_usage",
                     "data": {
                         "user_usage_memory_rss":self.format_bytes(memory_info.rss, 'MB'), 
                         "user_usage_memory_vms":self.format_bytes(memory_info.vms, 'MB'), 
@@ -48,9 +49,41 @@ class UserMonitor:
 
             except psutil.NoSuchProcess: pass
             except psutil.AccessDenied: pass
+
+    def get_patten(self, cmdline):
+        for target in self.configs['monitor']['user_usage']['process-regex']:
+             key, regex = list(target.items())[0]
+             if re.search(regex, cmdline): return key
+        return None
+
     def user_usage_exporter(self):
-        output = [x for x in self.process_info_generator()]
-        return output
+        process_info, user_patten = list(), list()
+        exec_data = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        for target in self.process_info_generator():
+            process_info.append(target)
+            result = self.get_patten(target['label']['cmdline'])
+            if result == None: continue
+            user_patten.append({
+                "username":target['label']["username"], "hostname":target['hostname'],"type":result
+            })
+        data = pd.DataFrame(user_patten)
+        g_list = ["username", "hostname"]
+        user_resource_usage_statistics = list()
+        for group, target in data.groupby(g_list):
+            username, hostname = group
+            tmp = target.value_counts('type').to_dict()
+            
+            user_resource_usage_statistics.append({
+                "exec_data":exec_data, "label": {
+                    "username": username, "hostname":hostname
+                },
+                "metric": "user_resource_usage_statistics",
+                "data":tmp
+            })
+        return process_info + user_resource_usage_statistics
+        #pdb.set_trace()
+            
+        
         
 
 if __name__ == "__main__":
