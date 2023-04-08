@@ -3,6 +3,7 @@ monitor:
         size:
             - /var/log
             - /tmp
+        cmd: "du -s TARGET"
     user_usage:
         regex:
             - root
