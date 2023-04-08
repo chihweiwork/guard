@@ -9,7 +9,8 @@ class FolderMonitor:
         # 從 configeration 取出需要監控的資料夾
         for target in self.configs['monitor']['folder']['size']:
             # 使用 toolbox 中的 bash_command 執行系統指令
-            tmp = self.bash_command(f"du -s {target}")
+            cmd = self.configs['monitor']['folder']['cmd'].replace('TARGET', target)
+            tmp = self.bash_command(cmd)
             if tmp == '':
                 self.logger.error(f"Can not find {target}, skip thie folder")
                 continue
