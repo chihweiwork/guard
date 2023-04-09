@@ -1,9 +1,9 @@
 monitor:
-    #folder:
-    #    size:
-    #        - /var/log
-    #        - /tmp
-    #    cmd: "du -s TARGET"
+    folder:
+        size:
+            - /var/log
+            - /tmp
+        cmd: "du -s TARGET"
     user_usage:
         regex:
             - "user_[a-z]{3}cub[a-z]{2,4}"

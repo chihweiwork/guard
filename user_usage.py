@@ -21,7 +21,7 @@ class UserMonitor:
             return {'cpu_user':cpu_info.user, 'cpu_system':cpu_info.system, 'cpu_wio':cpu_info.iowait}
         
     def process_info_generator(self): 
-        exec_data = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        exec_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         
         for process in psutil.process_iter():
             try:
@@ -36,7 +36,7 @@ class UserMonitor:
                 label = {"username":username, 'pid':pid, 'cmdline': cmdline, 'name':name}
                 cpu_info = self._get_cpu_info(cpu_info)
                 target = {
-                    "exec_date":exec_data, "label":label, "metric":"user_resource_usage",
+                    "exec_date":exec_date, "label":label, "metric":"user_resource_usage",
                     "data": {
                         "user_usage_memory_rss":self.format_bytes(memory_info.rss, 'MB'), 
                         "user_usage_memory_vms":self.format_bytes(memory_info.vms, 'MB'), 
@@ -58,7 +58,7 @@ class UserMonitor:
 
     def user_usage_exporter(self):
         process_info, user_patten = list(), list()
-        exec_data = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        exec_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         for target in self.process_info_generator():
             process_info.append(target)
             result = self.get_patten(target['label']['cmdline'])
@@ -74,8 +74,10 @@ class UserMonitor:
             tmp = target.value_counts('type').to_dict()
             
             user_resource_usage_statistics.append({
-                "exec_data":exec_data, "label": {
-                    "username": username, "hostname":hostname
+                "exec_date":exec_date, 
+                "hostname":hostname, 
+                "label": {
+                    "username": username
                 },
                 "metric": "user_resource_usage_statistics",
                 "data":tmp
