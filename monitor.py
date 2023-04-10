@@ -36,6 +36,7 @@ class Exporter(
 
         # 這裡實例化監控物件
         FolderMonitor.__init__(self)
+        UserMonitor.__init__(self)
 
         self.exec_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         
